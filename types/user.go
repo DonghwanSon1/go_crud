@@ -9,6 +9,18 @@ type UserResponse struct {
 	*User
 }
 
+type CreateRequest struct {
+	Name string `json:"name" binding:"required"`
+	Age  int64  `json:"age" binding:"required"`
+}
+
+func (c *CreateRequest) ToUser() *User {
+	return &User{
+		Name: c.Name,
+		Age:  c.Age,
+	}
+}
+
 type CreateUserResponse struct {
 	*ApiResponse
 }
@@ -18,8 +30,23 @@ type GetUserResponse struct {
 	Users []*User `json:"result"`
 }
 
+type UpdateRequest struct {
+	Name      string `json:"name" binding:"required"`
+	UpdateAge int64  `json:"updateAge" binding:"required"`
+}
+
 type UpdateUserResponse struct {
 	*ApiResponse
+}
+
+type DeleteRequest struct {
+	Name string `json:"name" binding:"required"`
+}
+
+func (c *DeleteRequest) ToUser() *User {
+	return &User{
+		Name: c.Name,
+	}
 }
 
 type DeleteUserResponse struct {
