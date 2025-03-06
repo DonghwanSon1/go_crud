@@ -36,6 +36,7 @@ func newUserRouter(router *Network, userService *service.User) *userRouter {
 
 func (u *userRouter) create(c *gin.Context) {
 	fmt.Println("create 입니다.")
+	u.userService.Create(nil)
 	u.router.okResponse(c, &types.CreateUserResponse{
 		ApiResponse: types.NewApiResponse("성공입니다.", 1),
 	})
@@ -45,12 +46,14 @@ func (u *userRouter) get(c *gin.Context) {
 	fmt.Println("get 입니다.")
 	u.router.okResponse(c, &types.GetUserResponse{
 		ApiResponse: types.NewApiResponse("성공입니다.", 1),
-		User:        nil,
+		Users:       u.userService.Get(),
 	})
 }
 
 func (u *userRouter) update(c *gin.Context) {
 	fmt.Println("update 입니다.")
+	u.userService.Update(nil, nil)
+
 	u.router.okResponse(c, &types.UpdateUserResponse{
 		ApiResponse: types.NewApiResponse("성공입니다.", 1),
 	})
@@ -58,6 +61,7 @@ func (u *userRouter) update(c *gin.Context) {
 
 func (u *userRouter) delete(c *gin.Context) {
 	fmt.Println("delete 입니다.")
+	u.userService.Delete(nil)
 	u.router.okResponse(c, &types.DeleteUserResponse{
 		ApiResponse: types.NewApiResponse("성공입니다.", 1),
 	})
