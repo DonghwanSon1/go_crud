@@ -1,23 +1,28 @@
 package cmd
 
 import (
-	"fmt"
 	"go_crud/config"
 	"go_crud/network"
+	"go_crud/repository"
+	"go_crud/service"
 )
 
 type Cmd struct {
-	config  *config.Config
-	network *network.Network
+	config *config.Config
+
+	network    *network.Network
+	repository *repository.Repository
+	service    *service.Service
 }
 
 func NewCmd(filePath string) *Cmd {
 	c := &Cmd{
-		config:  config.NewConfig(filePath),
-		network: network.NewNetwork(),
+		config: config.NewConfig(filePath),
 	}
+	c.repository = repository.NewRepository()
+	c.service = service.NewService(c.repository)
+	c.network = network.NewNetwork(c.service)
 
-	fmt.Println(c.config.Server.Port)
 	c.network.ServerStart(c.config.Server.Port)
 
 	return c
