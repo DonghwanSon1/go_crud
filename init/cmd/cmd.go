@@ -16,6 +16,8 @@ type Cmd struct {
 }
 
 func NewCmd(filePath string) *Cmd {
+	config.ConnectToDb()
+	config.SyncDatabase()
 	c := &Cmd{
 		config: config.NewConfig(filePath),
 	}

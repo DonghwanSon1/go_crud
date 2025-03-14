@@ -2,6 +2,7 @@ package network
 
 import (
 	"github.com/gin-gonic/gin"
+	"go_crud/models"
 	"go_crud/service"
 	"go_crud/types"
 	"sync"
@@ -25,28 +26,48 @@ func newUserRouter(router *Network, userService *service.User) *userRouter {
 			userService: userService,
 		}
 
+		router.registerPOST("/signup", userRouterInstance.signup)
+		router.registerPOST("/login", userRouterInstance.login)
 		router.registerGET("/", userRouterInstance.get)
-		router.registerPOST("/", userRouterInstance.create)
 		router.registerUPDATE("/", userRouterInstance.update)
 		router.registerDELETE("/", userRouterInstance.delete)
 	})
 	return userRouterInstance
 }
 
-func (u *userRouter) create(c *gin.Context) {
-	var req types.CreateRequest
+func (u *userRouter) signup(c *gin.Context) {
+	var req types.SignupRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		u.router.failedResponse(c, &types.CreateUserResponse{
+		u.router.failedResponse(c, &types.ErrorResponse{
 			ApiResponse: types.NewApiResponse("바인딩 오류 입니다.", -1, err.Error()),
 		})
-	} else if err = u.userService.Create(req.ToUser()); err != nil {
-		u.router.failedResponse(c, &types.CreateUserResponse{
-			ApiResponse: types.NewApiResponse("Create 에러 입니다.", -1, err.Error()),
+	} else if err = u.userService.Signup(models.ToUser(req)); err != nil {
+		u.router.failedResponse(c, &types.ErrorResponse{
+			ApiResponse: types.NewApiResponse("Singup 에러 입니다.", -1, err.Error()),
 		})
 	} else {
-		u.router.okResponse(c, &types.CreateUserResponse{
+		u.router.okResponse(c, &types.SignupUserResponse{
 			ApiResponse: types.NewApiResponse("성공입니다.", 1, nil),
+		})
+	}
+}
+
+func (u *userRouter) login(c *gin.Context) {
+	var req types.LoginRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		u.router.failedResponse(c, &types.ErrorResponse{
+			ApiResponse: types.NewApiResponse("바인딩 오류 입니다.", -1, err.Error()),
+		})
+	} else if result, err := u.userService.Login(req); err != nil {
+		u.router.failedResponse(c, &types.ErrorResponse{
+			ApiResponse: types.NewApiResponse("Login 에러 입니다.", -1, err.Error()),
+		})
+	} else {
+		u.router.okResponse(c, &types.LoginResponse{
+			ApiResponse: types.NewApiResponse("성공입니다.", 1, nil),
+			Token:       result,
 		})
 	}
 }
@@ -61,11 +82,11 @@ func (u *userRouter) get(c *gin.Context) {
 func (u *userRouter) update(c *gin.Context) {
 	var req types.UpdateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		u.router.failedResponse(c, &types.UpdateUserResponse{
+		u.router.failedResponse(c, &types.ErrorResponse{
 			ApiResponse: types.NewApiResponse("바인딩 오류 입니다.", -1, err.Error()),
 		})
-	} else if err = u.userService.Update(req.Name, req.UpdateAge); err != nil {
-		u.router.failedResponse(c, &types.UpdateUserResponse{
+	} else if err = u.userService.Update(req.Email, req.UpdateAge); err != nil {
+		u.router.failedResponse(c, &types.ErrorResponse{
 			ApiResponse: types.NewApiResponse("Update 에러 입니다.", -1, err.Error()),
 		})
 	} else {

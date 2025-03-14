@@ -1,28 +1,39 @@
 package types
 
 type User struct {
-	Name string `json:"name"`
-	Age  int64  `json:"age"`
+	Email string `json:"email"`
+	Age   int64  `json:"age"`
 }
 type UserResponse struct {
 	*ApiResponse
 	*User
 }
 
-type CreateRequest struct {
-	Name string `json:"name" binding:"required"`
-	Age  int64  `json:"age" binding:"required"`
+type SignupRequest struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	Age      int64  `json:"age" binding:"required"`
 }
-
-func (c *CreateRequest) ToUser() *User {
-	return &User{
-		Name: c.Name,
-		Age:  c.Age,
-	}
-}
-
-type CreateUserResponse struct {
+type SignupUserResponse struct {
 	*ApiResponse
+}
+
+//func (c *SignupRequest) SignupRq() *models.User {
+//	return &models.User{
+//		Email:    c.Email,
+//		Password: c.Password,
+//		Age:      c.Age,
+//	}
+//}
+
+type LoginRequest struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+type LoginResponse struct {
+	*ApiResponse
+	Token string `json:"token"`
 }
 
 type GetUserResponse struct {
@@ -31,7 +42,7 @@ type GetUserResponse struct {
 }
 
 type UpdateRequest struct {
-	Name      string `json:"name" binding:"required"`
+	Email     string `json:"email" binding:"required"`
 	UpdateAge int64  `json:"updateAge" binding:"required"`
 }
 
@@ -40,15 +51,19 @@ type UpdateUserResponse struct {
 }
 
 type DeleteRequest struct {
-	Name string `json:"name" binding:"required"`
+	Email string `json:"email" binding:"required"`
 }
 
 func (c *DeleteRequest) ToUser() *User {
 	return &User{
-		Name: c.Name,
+		Email: c.Email,
 	}
 }
 
 type DeleteUserResponse struct {
+	*ApiResponse
+}
+
+type ErrorResponse struct {
 	*ApiResponse
 }
