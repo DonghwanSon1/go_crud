@@ -17,7 +17,7 @@ func newUserRepository() *UserRepository {
 	}
 }
 
-func (u *UserRepository) Signup(newUser *models.User) error {
+func (u *UserRepository) Signup(newUser *models.UsersInfo) error {
 	result := config.DB.Create(newUser)
 	if result.Error != nil {
 		return result.Error
@@ -25,13 +25,13 @@ func (u *UserRepository) Signup(newUser *models.User) error {
 	return nil
 }
 
-func (u *UserRepository) FindUserByEmail(email string) (*models.User, error) {
-	var user models.User
-	result := config.DB.First(&user, "email = ?", email)
+func (u *UserRepository) FindUserByEmail(userId string) (*models.UsersInfo, error) {
+	var usersInfo models.UsersInfo
+	result := config.DB.First(&usersInfo, "user_id = ?", userId)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return &user, nil
+	return &usersInfo, nil
 }
 
 func (u *UserRepository) Update(email string, newAge int64) error {

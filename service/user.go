@@ -2,10 +2,12 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"go_crud/models"
 	"go_crud/repository"
 	"go_crud/types"
+	"go_crud/types/usersInfo"
 	"golang.org/x/crypto/bcrypt"
 	"os"
 	"time"
@@ -21,7 +23,8 @@ func newUserService(userRepository *repository.UserRepository) *User {
 	}
 }
 
-func (u *User) Signup(newUser *models.User) error {
+func (u *User) Signup(newUser *models.UsersInfo) error {
+	// 비밀번호 인코딩
 	hash, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
@@ -30,9 +33,9 @@ func (u *User) Signup(newUser *models.User) error {
 	return u.userRepository.Signup(newUser)
 }
 
-func (u *User) Login(req types.LoginRequest) (tokenString string, err error) {
+func (u *User) Login(req usersInfo.LoginRequest) (tokenString string, err error) {
 
-	user, dbErr := u.userRepository.FindUserByEmail(req.Email)
+	user, dbErr := u.userRepository.FindUserByEmail(req.UserId)
 	if dbErr != nil {
 		return "", errors.New("해당 사용자가 존재하지 않습니다")
 	}
@@ -43,9 +46,11 @@ func (u *User) Login(req types.LoginRequest) (tokenString string, err error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email": user.Email,
-		"exp":   time.Now().Add(30 * time.Minute).Unix(), // 30분
+		"userId": user.UserId,
+		"exp":    time.Now().Add(30 * time.Minute).Unix(), // 30분
 	})
+
+	fmt.Println("시간 : ", token.Claims.(jwt.MapClaims)["exp"])
 
 	tokenString, err = token.SignedString([]byte(os.Getenv("SECRET")))
 	if err != nil {

@@ -9,14 +9,14 @@ type UserResponse struct {
 	*User
 }
 
-type SignupRequest struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	Age      int64  `json:"age" binding:"required"`
-}
-type SignupUserResponse struct {
-	*ApiResponse
-}
+//type SignupRequest struct {
+//	Email    string `json:"email" binding:"required"`
+//	Password string `json:"password" binding:"required"`
+//	Age      int64  `json:"age" binding:"required"`
+//}
+//type SignupUserResponse struct {
+//	*ApiResponse
+//}
 
 //func (c *SignupRequest) SignupRq() *models.User {
 //	return &models.User{
@@ -26,15 +26,15 @@ type SignupUserResponse struct {
 //	}
 //}
 
-type LoginRequest struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
-type LoginResponse struct {
-	*ApiResponse
-	Token string `json:"token"`
-}
+//type LoginRequest struct {
+//	Email    string `json:"email" binding:"required"`
+//	Password string `json:"password" binding:"required"`
+//}
+//
+//type LoginResponse struct {
+//	*ApiResponse
+//	Token string `json:"token"`
+//}
 
 type GetUserResponse struct {
 	*ApiResponse

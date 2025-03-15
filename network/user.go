@@ -2,9 +2,10 @@ package network
 
 import (
 	"github.com/gin-gonic/gin"
-	"go_crud/models"
 	"go_crud/service"
 	"go_crud/types"
+	"go_crud/types/errors"
+	"go_crud/types/usersInfo"
 	"sync"
 )
 
@@ -36,36 +37,36 @@ func newUserRouter(router *Network, userService *service.User) *userRouter {
 }
 
 func (u *userRouter) signup(c *gin.Context) {
-	var req types.SignupRequest
+	var req usersInfo.SignupRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		u.router.failedResponse(c, &types.ErrorResponse{
+		u.router.failedResponse(c, &errors.ErrorResponse{
 			ApiResponse: types.NewApiResponse("바인딩 오류 입니다.", -1, err.Error()),
 		})
-	} else if err = u.userService.Signup(models.ToUser(req)); err != nil {
-		u.router.failedResponse(c, &types.ErrorResponse{
+	} else if err = u.userService.Signup(req.CreateUsersInfo()); err != nil {
+		u.router.failedResponse(c, &errors.ErrorResponse{
 			ApiResponse: types.NewApiResponse("Singup 에러 입니다.", -1, err.Error()),
 		})
 	} else {
-		u.router.okResponse(c, &types.SignupUserResponse{
+		u.router.okResponse(c, &usersInfo.SignupUserResponse{
 			ApiResponse: types.NewApiResponse("성공입니다.", 1, nil),
 		})
 	}
 }
 
 func (u *userRouter) login(c *gin.Context) {
-	var req types.LoginRequest
+	var req usersInfo.LoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		u.router.failedResponse(c, &types.ErrorResponse{
+		u.router.failedResponse(c, &errors.ErrorResponse{
 			ApiResponse: types.NewApiResponse("바인딩 오류 입니다.", -1, err.Error()),
 		})
 	} else if result, err := u.userService.Login(req); err != nil {
-		u.router.failedResponse(c, &types.ErrorResponse{
+		u.router.failedResponse(c, &errors.ErrorResponse{
 			ApiResponse: types.NewApiResponse("Login 에러 입니다.", -1, err.Error()),
 		})
 	} else {
-		u.router.okResponse(c, &types.LoginResponse{
+		u.router.okResponse(c, &usersInfo.LoginResponse{
 			ApiResponse: types.NewApiResponse("성공입니다.", 1, nil),
 			Token:       result,
 		})
