@@ -1,6 +1,9 @@
 package network
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"net/http"
+)
 
 // register 유틸 함수들
 func (n *Network) registerGET(path string, handler ...gin.HandlerFunc) gin.IRoutes {
@@ -21,9 +24,17 @@ func (n *Network) registerDELETE(path string, handler ...gin.HandlerFunc) gin.IR
 
 // Response 형태 맞추기 위한 유틸 함수 입니다.
 func (n *Network) okResponse(c *gin.Context, result interface{}) {
-	c.JSON(200, result)
+	c.JSON(http.StatusOK, result)
 }
 
-func (n *Network) failedResponse(c *gin.Context, result interface{}) {
-	c.JSON(400, result)
+func (n *Network) badRequestResponse(c *gin.Context, result interface{}) {
+	c.JSON(http.StatusBadRequest, result)
+}
+
+func (n *Network) unAuthorizedResponse(c *gin.Context, result interface{}) {
+	c.JSON(http.StatusUnauthorized, result)
+}
+
+func (n *Network) forbiddenRequest(c *gin.Context, result interface{}) {
+	c.JSON(http.StatusForbidden, result)
 }

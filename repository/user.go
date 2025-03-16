@@ -69,5 +69,5 @@ func (u *UserRepository) Delete(userEmail string) error {
 }
 
 func (u *UserRepository) Get() []*types.User {
-	return u.userMap
+	return append(u.userMap)
 }

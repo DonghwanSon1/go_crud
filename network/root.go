@@ -16,7 +16,8 @@ func NewNetwork(service *service.Service) *Network {
 		engin: gin.New(),
 	}
 
-	newUserRouter(r, service.User)
+	middlewareRouter := newMiddlewareRouter(r, service.Middleware)
+	newUserRouter(r, service.User, middlewareRouter)
 	return r
 }
 

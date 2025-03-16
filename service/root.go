@@ -13,7 +13,8 @@ var (
 type Service struct {
 	repository *repository.Repository
 
-	User *User
+	User       *User
+	Middleware *Middleware
 }
 
 func NewService(rep *repository.Repository) *Service {

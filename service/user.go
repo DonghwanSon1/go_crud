@@ -68,6 +68,7 @@ func (u *User) Delete(user *types.User) error {
 	return u.userRepository.Delete(user.Email)
 }
 
-func (u *User) Get() []*types.User {
+func (u *User) Get(userId string) []*types.User {
+	fmt.Println(userId)
 	return u.userRepository.Get()
 }
