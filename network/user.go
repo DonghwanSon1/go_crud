@@ -29,6 +29,7 @@ func newUserRouter(router *Network, userService *service.User, middleware *middl
 
 		router.registerPOST("/signup", userRouterInstance.signup)
 		router.registerPOST("/login", userRouterInstance.login)
+		router.registerPOST("/refresh-token", userRouterInstance.refreshToken)
 
 		//adminGroup := router.engin.Group("/admin", middleware.tokenValidate)
 		//adminGroup.GET("/", userRouterInstance.get)
@@ -77,6 +78,34 @@ func (u *userRouter) login(c *gin.Context) {
 			Token:       result,
 		})
 	}
+}
+
+func (u *userRouter) refreshToken(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+
+	if token == "" {
+		u.router.badRequestResponse(c, &errors.ErrorResponse{
+			ApiResponse: types.NewApiResponse("토큰이 없습니다.", -1, "Authorization header is required."),
+		})
+		return
+	}
+
+	// Bearer 토큰이 있을 경우 "Bearer " 제거
+	if len(token) > 7 && token[:7] == "Bearer " {
+		token = token[7:]
+	}
+
+	if refreshToken, err := u.userService.RefreshToken(token); err != nil {
+		u.router.badRequestResponse(c, &errors.ErrorResponse{
+			ApiResponse: types.NewApiResponse("재로그인 부탁드립니다.", -1, err.Error()),
+		})
+	} else {
+		u.router.okResponse(c, &usersInfo.LoginResponse{
+			ApiResponse: types.NewApiResponse("토큰 재발급 성공입니다.", 1, nil),
+			Token:       refreshToken,
+		})
+	}
+
 }
 
 func (u *userRouter) get(c *gin.Context) {

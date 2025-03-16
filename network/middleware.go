@@ -54,7 +54,7 @@ func (m *middlewareRouter) tokenValidate(c *gin.Context) {
 
 	if userId, err := m.middlewareService.ValidateToken(token); err != nil {
 		m.router.unAuthorizedResponse(c, &errors.ErrorResponse{
-			ApiResponse: types.NewApiResponse("유효하지 않은 토큰입니다. 재로그인 부탁드립니다.", -1, err.Error()),
+			ApiResponse: types.NewApiResponse("재로그인 부탁드립니다.", -1, err.Error()),
 		})
 		c.Abort()
 		return

@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"os"
 	"time"
@@ -16,12 +15,16 @@ func newMiddlewareService() *Middleware {
 }
 
 func (m *Middleware) ValidateToken(tokenString string) (userId string, err error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, signErr := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, errors.New("유효하지 않은 토큰")
 		}
 		return []byte(os.Getenv("SECRET")), nil
 	})
+
+	if signErr != nil {
+		return "", signErr
+	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
